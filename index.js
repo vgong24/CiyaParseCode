@@ -21,8 +21,8 @@ var api = new ParseServer({
     android: {
       senderId: '88513005598', // The Sender ID of GCM
       apiKey: 'AIzaSyBByNPABaEMLvCMT2zzrvnIgq9z5Y9VoMA' // The Server API Key of GCM
-    },
-  }
+    }
+  },
   liveQuery: {
     classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
   }
