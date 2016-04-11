@@ -1,4 +1,3 @@
-
 Parse.Cloud.define('hello', function(req, res) {
   res.success('Hi');
 });
@@ -26,7 +25,7 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
   // Validate the message text.
   // For example make sure it is under 140 characters
   if (message.length > 140) {
-  // Truncate and add a ...
+    // Truncate and add a ...
     message = message.substring(0, 137) + "...";
   }
 
@@ -41,16 +40,15 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
   Parse.Push.send({
     where: pushQuery,
     data: {
-	  title: title,
-	  message: message,
-	  is_background: is_background
-  },
-  useMasterKey: true
-
-
+      title: title,
+      message: message,
+      is_background: is_background
+    }
+  }, {
+    useMasterKey: true
   }).then(function() {
-      response.success("Push was sent successfully.")
+    response.success("Push was sent successfully.")
   }, function(error) {
-      response.error("Push failed to send with error: " + error.message);
+    response.error("Push failed to send with error: " + error.message);
   });
 });
