@@ -15,24 +15,6 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
 
 });
 
-Parse.Cloud.define("notifyAll", function(request, response) {
-  var query = new Parse.Query(Parse.Installation);
-  Parse.Push.send({
-    where: query,
-    data: {
-      alert: "Broadcast to everyone"
-    }
-  }, {
-    success: function(){
-
-    },
-    error: function(error) {
-      
-    }
-  }
-  });
-});
-
 Parse.Cloud.define("sendPushToUser", function(request, response) {
   var senderUser = request.user;
   var recipientUserId = request.params.recipientId;
