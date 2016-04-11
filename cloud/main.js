@@ -44,7 +44,8 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
 	  title: title,
 	  message: message,
 	  is_background: is_background
-    }
+  },
+  useMasterKey: true
 
 
   }).then(function() {
