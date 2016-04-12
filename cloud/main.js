@@ -30,14 +30,14 @@ Parse.Cloud.define("notifyAllUsers", function(request, response) {
 
 });
 
-/*
+
 Parse.Cloud.define("notifyFollowers", function(request, response) {
 
   var senderUserId = request.params.senderId;
   var title = senderUser + " changed their status";
   var message = request.params.message;
 
-  var currentUserQuery = new ParseQuery(Parse.User);
+  var currentUserQuery = new Parse.Query(Parse.User);
   currentUserQuery.get(senderUserId, {
     //Got the ParseUser object
     success: function(userObject) {
@@ -58,7 +58,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
 
           if (listOfUsers.length <= 0) {
             response.error("No favorites.");
-          }else{
+          } else {
             Parse.Push.send({
               where: pushQuery,
               data: {
@@ -89,7 +89,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   });
 
 });
-*/
+
 
 Parse.Cloud.define("getAllFollowers", function(request, response) {
   var favoriteUser = request.params.user;
