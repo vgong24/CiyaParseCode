@@ -2,6 +2,29 @@ Parse.Cloud.define('hello', function(req, res) {
   res.success('Hi');
 });
 
+Parse.Cloud.define("notifyAllUsers", function(request, response) {
+  var title = "notifyTest";
+  var message = "this is a test post";
+
+  Parse.Push.send({
+    data: {
+      title: title,
+      message: message
+    }
+  }, {
+    success: function() {
+      // Push was successful
+      response.success("notification sent");
+    },
+    error: function(error) {
+      // Handle error
+      response.error("Push failed to send : " + error.message + " " + title + " " + message);
+    },
+    useMasterKey: true
+  });
+
+});
+
 Parse.Cloud.define("notifyFollowers", function(request, response) {
   var senderUserId = request.params.senderId;
   var title = senderUser + " changed their status";
