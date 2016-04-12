@@ -37,7 +37,6 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
 
   var Favorites = new Parse.Object.extend("Favorites");
 
-  var pushQuery = new Parse.Query(Parse.Installation);
   var followersQuery = new Parse.Query(Favorites);
   var userQuery = new Parse.Query(Parse.User);
 
@@ -53,6 +52,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
       for (var i = 0; i < results.length; i++) {
         listOfUsers.push(results[i].get("follower"));
       }
+      var pushQuery = new Parse.Query(Parse.Installation);
       pushQuery.equalTo("pUser", listOfUsers);
 
       Parse.Push.send({
