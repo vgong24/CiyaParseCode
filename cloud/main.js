@@ -3,7 +3,7 @@ Parse.Cloud.define('hello', function(req, res) {
 });
 
 Parse.Cloud.define("notifyFollowers", function(request, response) {
-  var senderUserId = request.user;
+  var senderUserId = request.params.senderId;
   var title = senderUser + " changed their status";
   var message = request.params.message;
   var is_background = false;
