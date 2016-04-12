@@ -34,9 +34,11 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var senderUserId = request.params.senderId;
   var title = senderUser + " changed their status";
   var message = request.params.message;
-  var is_background = false;
+
+  var Favorites = new Parse.Object.extend("Favorites");
+
   var pushQuery = new Parse.Query(Parse.Installation);
-  var followersQuery = new Parse.Query(Parse.Favorites);
+  var followersQuery = new Parse.Query(Favorites);
   var userQuery = new Parse.Query(Parse.User);
 
   var listOfUsers = [];
@@ -51,7 +53,9 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
       for (var i = 0; i < results.length; i++) {
         listOfUsers.push(results[i].get("follower"));
       }
+      console.log(listOfUsers.length);
       pushQuery.equalTo("pUser", listOfUsers);
+
       Parse.Push.send({
         where: pushQuery,
         data: {
