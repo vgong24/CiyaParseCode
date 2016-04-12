@@ -51,7 +51,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
       for (var i = 0; i < results.length; i++) {
         listOfUsers.push(results[i].get("follower"));
       }
-      pushQuery.containedIn("pUser", listOfUsers);
+      pushQuery.equalTo("pUser", listOfUsers);
       Parse.Push.send({
         where: pushQuery,
         data: {
