@@ -39,7 +39,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var ParseUser = new Parse.User();
 
   var currentUserQuery = new Parse.Query(ParseUser);
-  currentUserQuery.get(senderUserId, {
+  currentUserQuery.get(String(senderUserId), {
     //Got the ParseUser object
     success: function(userObject) {
       response.success(userObject);
