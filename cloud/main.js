@@ -56,8 +56,8 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
           var pushQuery = new Parse.Query(Parse.Installation);
           pushQuery.equalTo("pUser", listOfUsers);
 
-          if (listOfUsers.length <= 0) {
-            response.error("No favorites.");
+          if (results.length <= 0) {
+            response.sucess("No favorites.");
           } else {
             Parse.Push.send({
               where: pushQuery,
