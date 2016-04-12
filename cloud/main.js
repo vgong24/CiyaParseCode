@@ -41,47 +41,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   currentUserQuery.get(senderUserId, {
     //Got the ParseUser object
     success: function(userObject) {
-
-      var Favorites = new Parse.Object.extend("Favorites");
-      var followersQuery = new Parse.Query(Favorites);
-      var listOfUsers = [];
-      //Get Favorite objects where favorite is currentuser
-      followersQuery.equalTo("favorite", userObject);
-      followersQuery.include("follower");
-      followersQuery.find({
-        success: function(results) {
-          for (var i = 0; i < results.length; i++) {
-            listOfUsers.push(results[i].get("follower"));
-          }
-          var pushQuery = new Parse.Query(Parse.Installation);
-          pushQuery.equalTo("pUser", listOfUsers);
-
-          if (results.length <= 0) {
-            response.sucess("No favorites.");
-          } else {
-            Parse.Push.send({
-              where: pushQuery,
-              data: {
-                title: title,
-                message: message
-              }
-            }, {
-              success: function() {
-                // Push was successful
-                response.success("notification sent");
-              },
-              error: function(error) {
-                // Handle error
-                response.error("Push failed to send : " + error.message + " " + title + " " + message);
-              },
-              useMasterKey: true
-            });
-          }
-        },
-        error: function() {
-          response.error("Favorite lookup failed");
-        }
-      });
+      response.success(userObject);
     },
     error: function(object, error) {
       response.error("Failed again";)
