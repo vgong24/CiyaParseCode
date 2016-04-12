@@ -40,9 +40,9 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
   Parse.Push.send({
     where: pushQuery,
     data: {
-      title: title,
-      message: message,
-      is_background: is_background
+      "title": title,
+      "message": message,
+      "is_background": is_background
     }
   }, {
     useMasterKey: true
