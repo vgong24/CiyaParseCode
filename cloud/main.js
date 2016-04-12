@@ -35,48 +35,54 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var title = senderUser + " changed their status";
   var message = request.params.message;
 
-  var Favorites = new Parse.Object.extend("Favorites");
 
-  var followersQuery = new Parse.Query(Favorites);
-  var userQuery = new Parse.Query(Parse.User);
 
-  var listOfUsers = [];
+  var currentUserQuery = new ParseQuery(Parse.User);
+  currentUserQuery.get(senderUserId, {
+    //Got the ParseUser object
+    success: function(userObject) {
 
-  var recipientUser = new Parse.User();
-  recipientUser.id = senderUserId;
-  //Search for Favorite objects who are following the senderUser
-  followersQuery.equalTo("favorite", recipientUser);
-  followersQuery.include("follower");
-  followersQuery.find({
-    success: function(results) {
-      for (var i = 0; i < results.length; i++) {
-        listOfUsers.push(results[i].get("follower"));
-      }
-      var pushQuery = new Parse.Query(Parse.Installation);
-      pushQuery.equalTo("pUser", listOfUsers);
+      var Favorites = new Parse.Object.extend("Favorites");
+      var followersQuery = new Parse.Query(Favorites);
+      var listOfUsers = [];
+      //Get Favorite objects where favorite is currentuser
+      followersQuery.equalTo("favorite", userObject);
+      followersQuery.include("follower");
+      followersQuery.find({
+        success: function(results) {
+          for (var i = 0; i < results.length; i++) {
+            listOfUsers.push(results[i].get("follower"));
+          }
+          var pushQuery = new Parse.Query(Parse.Installation);
+          pushQuery.equalTo("pUser", listOfUsers);
 
-      Parse.Push.send({
-        where: pushQuery,
-        data: {
-          title: title,
-          message: message
+          Parse.Push.send({
+            where: pushQuery,
+            data: {
+              title: title,
+              message: message
+            }
+          }, {
+            success: function() {
+              // Push was successful
+              response.success("notification sent");
+            },
+            error: function(error) {
+              // Handle error
+              response.error("Push failed to send : " + error.message + " " + title + " " + message);
+            },
+            useMasterKey: true
+          });
+
+
+        },
+        error: function() {
+          response.error("Favorite lookup failed");
         }
-      }, {
-        success: function() {
-          // Push was successful
-          response.success("notification sent");
-        },
-        error: function(error) {
-          // Handle error
-          response.error("Push failed to send : " + error.message + " " + title + " " + message);
-        },
-        useMasterKey: true
       });
-
-
     },
-    error: function() {
-      response.error("Favorite lookup failed");
+    error: function(object, error) {
+
     }
   });
 
