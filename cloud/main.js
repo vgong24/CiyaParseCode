@@ -39,38 +39,42 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var followersQuery = new Parse.Query(Parse.Favorites);
   var userQuery = new Parse.Query(Parse.User);
 
+  var listOfUsers = [];
+
   var recipientUser = new Parse.User();
   recipientUser.id = senderUserId;
   //Search for Favorite objects who are following the senderUser
   followersQuery.equalTo("favorite", recipientUser);
+  followersQuery.include("follower");
+  followersQuery.find({
+    success: function(results) {
+      for (var i = 0; i < results.length; i++) {
+        listOfUsers.push(results[i].get("follower"));
+      }
+      pushQuery.containedIn("pUser", listOfUsers);
+      Parse.Push.send({
+        where: pushQuery,
+        data: {
+          title: title,
+          message: message
+        }
+      }, {
+        success: function() {
+          // Push was successful
+          response.success("notification sent");
+        },
+        error: function(error) {
+          // Handle error
+          response.error("Push failed to send : " + error.message + " " + title + " " + message);
+        },
+        useMasterKey: true
+      });
 
-  //Get the users who are followers of the Favorites
-  userQuery.include("follower");
-  userQuery.matchesQuery('follower', followersQuery);
 
-  //Query the Parse.Installation for users in the list of following users
-  pushQuery.exists("pUser");
-  pushQuery.include("pUser");
-  pushQuery.matchesQuery('pUser', userQuery);
-
-  //Send a push notification to those users.
-  // Send the push notification to results of the query
-  Parse.Push.send({
-    where: pushQuery,
-    data: {
-      title: title,
-      message: message
+    },
+    error: function() {
+      response.error("Favorite lookup failed");
     }
-  }, {
-    success: function() {
-      // Push was successful
-      response.success("notification sent");
-    },
-    error: function(error) {
-      // Handle error
-      response.error("Push failed to send : " + error.message + " " + title + " " + message);
-    },
-    useMasterKey: true
   });
 
 });
