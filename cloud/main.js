@@ -30,7 +30,9 @@ Parse.Cloud.define("notifyAllUsers", function(request, response) {
 
 });
 
+/*
 Parse.Cloud.define("notifyFollowers", function(request, response) {
+
   var senderUserId = request.params.senderId;
   var title = senderUser + " changed their status";
   var message = request.params.message;
@@ -87,6 +89,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   });
 
 });
+*/
 
 Parse.Cloud.define("getAllFollowers", function(request, response) {
   var favoriteUser = request.params.user;
