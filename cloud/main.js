@@ -37,13 +37,21 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var is_background = false;
   var pushQuery = new Parse.Query(Parse.Installation);
   var followersQuery = new Parse.Query(Parse.Favorites);
+  var userQuery = new Parse.Query(Parse.User);
 
   var recipientUser = new Parse.User();
   recipientUser.id = senderUserId;
-  //Search for parseUsers who are following the senderUser
+  //Search for Favorite objects who are following the senderUser
   followersQuery.equalTo("favorite", recipientUser);
+
+  //Get the users who are followers of the Favorites
+  userQuery.include("follower");
+  userQuery.matchesQuery('follower', followersQuery);
+
   //Query the Parse.Installation for users in the list of following users
-  pushQuery.matchesQuery('pUser', followersQuery);
+  pushQuery.exists("pUser");
+  pushQuery.include("user");
+  pushQuery.matchesQuery('pUser', userQuery);
 
   //Send a push notification to those users.
   // Send the push notification to results of the query
