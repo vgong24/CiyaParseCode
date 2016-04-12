@@ -38,12 +38,7 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
 
   // Send the push notification to results of the query
   Parse.Push.send({
-    // where: pushQuery,
-    where: {
-      "deviceType": {
-        "$in": ["ios", "android"]
-      }
-    },
+    where: pushQuery,
     data: {
       title: title,
       message: message
