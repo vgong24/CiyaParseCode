@@ -3,14 +3,44 @@ Parse.Cloud.define('hello', function(req, res) {
 });
 
 Parse.Cloud.define("notifyFollowers", function(request, response) {
-  var senderUser = request.user;
+  var senderUserId = request.user;
   var title = senderUser + " changed their status";
   var message = request.params.message;
   var is_background = false;
+  var pushQuery = new Parse.Query(Parse.Installation);
+  var followersQuery = new Parse.Query(Parse.Favorites);
 
+  var recipientUser = new Parse.User();
+  recipientUser.id = senderUserId;
   //Search for parseUsers who are following the senderUser
+  followersQuery.equalTo("favorite", recipientUser);
   //Query the Parse.Installation for users in the list of following users
+  pushQuery.matchesQuery('pUser', followersQuery);
+
   //Send a push notification to those users.
+  // Send the push notification to results of the query
+  Parse.Push.send({
+    where: pushQuery,
+    data: {
+      title: title,
+      message: message
+    }
+  }, {
+    success: function() {
+      // Push was successful
+      response.success("notification sent");
+    },
+    error: function(error) {
+      // Handle error
+      response.error("Push failed to send : " + error.message + " " + title + " " + message);
+    },
+    useMasterKey: true
+  });
+
+});
+
+Parse.Cloud.define("getAllFollowers", function(request, response) {
+  var favoriteUser = request.params.user;
 
 });
 
