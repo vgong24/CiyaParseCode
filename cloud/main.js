@@ -37,21 +37,13 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
   pushQuery.equalTo("pUser", recipientUser);
 
   // Send the push notification to results of the query
-  // Parse.Push.send({
-  //   where: pushQuery,
-  //   data: {
-  //     alert: message
-  //   }
-  // }, {
-  //   useMasterKey: true
-  // }).then(function() {
-  //   response.success("Push was sent successfully.");
-  // }, function(error) {
-  //   response.error("Push failed to send with error: " + error.message);
-  // });
-
   Parse.Push.send({
-    where: pushQuery,
+    // where: pushQuery,
+    where: {
+      "deviceType": {
+        "$in": ["ios", "android"]
+      }
+    },
     data: {
       title: title,
       message: message
@@ -63,7 +55,7 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
     },
     error: function(error) {
       // Handle error
-      response.error("Push failed to send with error: " + error.message);
+      response.error("Push failed to send : " + error.message + " " + title + " " + message);
     },
     useMasterKey: true
   });
