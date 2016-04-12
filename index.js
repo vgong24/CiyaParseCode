@@ -22,9 +22,6 @@ var api = new ParseServer({
       senderId: '88513005598', // The Sender ID of GCM
       apiKey: 'AIzaSyBY2uSsYlOjSZ1tf6TgQyv_9mg2I3Ihr68' // The Server API Key of GCM
     }
-  },
-  liveQuery: {
-    classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
   }
 });
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
