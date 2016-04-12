@@ -7,6 +7,11 @@ Parse.Cloud.define("notifyAllUsers", function(request, response) {
   var message = "this is a test post";
 
   Parse.Push.send({
+    where: {
+      "deviceType": {
+        "$in": ["ios", "android"]
+      }
+    },
     data: {
       title: title,
       message: message
