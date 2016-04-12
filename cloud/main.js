@@ -50,7 +50,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
 
   //Query the Parse.Installation for users in the list of following users
   pushQuery.exists("pUser");
-  pushQuery.include("user");
+  pushQuery.include("pUser");
   pushQuery.matchesQuery('pUser', userQuery);
 
   //Send a push notification to those users.
