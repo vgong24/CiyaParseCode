@@ -37,16 +37,25 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var title = senderUser + " changed their status";
   var message = request.params.message;
   var ParseUser = new Parse.User();
+  var pushQuery = new Parse.Query(Parse.Installation);
+  pushQuery.equalTo("pUser", senderUserId);
 
-  var currentUserQuery = new Parse.Query(ParseUser);
-  currentUserQuery.get(String(senderUserId), {
-    //Got the ParseUser object
-    success: function(userObject) {
-      response.success(userObject);
-    },
-    error: function(object, error) {
-      response.error("Failed again";)
+  Parse.Push.send({
+    where: pushQuery,
+    data: {
+      title: title,
+      message: message
     }
+  }, {
+    success: function() {
+      // Push was successful
+      response.success("notification sent");
+    },
+    error: function(error) {
+      // Handle error
+      response.error("Push failed to send : " + error.message + " " + title + " " + message);
+    },
+    useMasterKey: true
   });
 
 });
