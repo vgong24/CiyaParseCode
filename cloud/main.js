@@ -35,8 +35,6 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var title = senderUser + " changed their status";
   var message = request.params.message;
 
-
-
   var currentUserQuery = new ParseQuery(Parse.User);
   currentUserQuery.get(senderUserId, {
     //Got the ParseUser object
@@ -56,6 +54,9 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
           var pushQuery = new Parse.Query(Parse.Installation);
           pushQuery.equalTo("pUser", listOfUsers);
 
+          if(listOfUsers.length <= 0) {
+            response.error("No favorites.");
+          }
           Parse.Push.send({
             where: pushQuery,
             data: {
@@ -82,7 +83,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
       });
     },
     error: function(object, error) {
-
+      response.error("Failed again";)
     }
   });
 
