@@ -36,9 +36,12 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var senderUserId = request.params.senderId;
   var title = senderUser + " changed their status";
   var message = request.params.message;
-  var ParseUser = new Parse.User();
+  var recipientUser = new Parse.User();
+  recipientUser.id = senderUserId;
+  
   var pushQuery = new Parse.Query(Parse.Installation);
-  pushQuery.equalTo("pUser", senderUserId);
+
+  pushQuery.equalTo("pUser", recipientUser);
 
   Parse.Push.send({
     where: pushQuery,
