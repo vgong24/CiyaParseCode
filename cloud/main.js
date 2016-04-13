@@ -34,7 +34,7 @@ Parse.Cloud.define("notifyAllUsers", function(request, response) {
 Parse.Cloud.define("notifyFollowers", function(request, response) {
 
   var senderUserId = request.params.senderId;
-  var title = senderUser + " changed their status";
+  var title = senderUserId + " changed their status";
   var message = request.params.message;
   var recipientUser = new Parse.User();
   recipientUser.id = senderUserId;
@@ -42,6 +42,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var pushQuery = new Parse.Query(Parse.Installation);
 
   pushQuery.equalTo("pUser", recipientUser);
+
 
   Parse.Push.send({
     where: pushQuery,
