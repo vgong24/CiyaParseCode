@@ -36,6 +36,60 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var senderUserId = request.params.senderId;
   var title = senderUserId + " changed their status";
   var message = request.params.message;
+  //Classes being used
+  var senderUser = new Parse.User();
+  senderUser.id = senderUserId;
+  var Favorites = new Parse.Object.extend("Favorites");
+
+
+  //Queries needed
+  var pushQuery = new Parse.Query(Parse.Installation);
+  var favoriteQuery = new Parse.Query(Favorites);
+  var userQuery = new Parse.Query(Parse.User);
+
+  //Get all favorites where favorite = userid
+  favoriteQuery.equalTo("favorite", senderUser);
+  favoriteQuery.include("follower", {
+    __type: "Pointer",
+    className: "_User"
+  });
+  favoriteQuery.find({
+    success: function(results) {
+      //arraylist of users
+      var listOfUsers = [];
+
+      for (var i = 0; i < results.length; i++) {
+        listOfUsers.push(results[i].get("follower"));
+      }
+      pushQuery.containedIn("pUser", listOfUsers);
+
+      //Send a push notification
+      Parse.Push.send({
+        where: pushQuery,
+        data: {
+          title: title,
+          alert: message
+        }
+      }, {
+        success: function() {
+          // Push was successful
+          response.success("notification sent");
+        },
+        error: function(error) {
+          // Handle error
+          response.error("Push failed to send : " + error.message + " " + title + " " + message);
+        },
+        useMasterKey: true
+      });
+
+    },
+    error: function(error) {
+
+    },
+    useMasterKey: true
+  });
+
+  /*
 
   var currentUserQuery = new Parse.Query(Parse.User);
   currentUserQuery.get(senderUserId, {
@@ -88,6 +142,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
       response.error("Failed again";)
     }
   });
+*/
 
 });
 
