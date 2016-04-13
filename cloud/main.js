@@ -36,30 +36,57 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var senderUserId = request.params.senderId;
   var title = senderUserId + " changed their status";
   var message = request.params.message;
-  var recipientUser = new Parse.User();
-  recipientUser.id = senderUserId;
 
-  var pushQuery = new Parse.Query(Parse.Installation);
+  var currentUserQuery = new ParseQuery(Parse.User);
+  currentUserQuery.get(senderUserId, {
+    //Got the ParseUser object
+    success: function(userObject) {
 
-  pushQuery.equalTo("pUser", recipientUser);
+      var Favorites = new Parse.Object.extend("Favorites");
+      var followersQuery = new Parse.Query(Favorites);
+      var listOfUsers = [];
+      //Get Favorite objects where favorite is currentuser
+      followersQuery.equalTo("favorite", userObject);
+      followersQuery.include("follower");
+      followersQuery.find({
+        success: function(results) {
+          for (var i = 0; i < results.length; i++) {
+            listOfUsers.push(results[i].get("follower"));
+          }
+          var pushQuery = new Parse.Query(Parse.Installation);
+          pushQuery.equalTo("pUser", listOfUsers);
+
+          if (listOfUsers.length <= 0) {
+            response.error("No favorites.");
+          }
+          Parse.Push.send({
+            where: pushQuery,
+            data: {
+              title: title,
+              message: message
+            }
+          }, {
+            success: function() {
+              // Push was successful
+              response.success("notification sent");
+            },
+            error: function(error) {
+              // Handle error
+              response.error("Push failed to send : " + error.message + " " + title + " " + message);
+            },
+            useMasterKey: true
+          });
 
 
-  Parse.Push.send({
-    where: pushQuery,
-    data: {
-      title: title,
-      alert: message
+        },
+        error: function() {
+          response.error("Favorite lookup failed");
+        }
+      });
+    },
+    error: function(object, error) {
+      response.error("Failed again";)
     }
-  }, {
-    success: function() {
-      // Push was successful
-      response.success("notification sent");
-    },
-    error: function(error) {
-      // Handle error
-      response.error("Push failed to send : " + error.message + " " + title + " " + message);
-    },
-    useMasterKey: true
   });
 
 });
