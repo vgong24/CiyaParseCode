@@ -14,7 +14,7 @@ Parse.Cloud.define("notifyAllUsers", function(request, response) {
     },
     data: {
       title: title,
-      message: message
+      alert: message
     }
   }, {
     success: function() {
@@ -38,7 +38,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
   var message = request.params.message;
   var recipientUser = new Parse.User();
   recipientUser.id = senderUserId;
-  
+
   var pushQuery = new Parse.Query(Parse.Installation);
 
   pushQuery.equalTo("pUser", recipientUser);
@@ -47,7 +47,7 @@ Parse.Cloud.define("notifyFollowers", function(request, response) {
     where: pushQuery,
     data: {
       title: title,
-      message: message
+      alert: message
     }
   }, {
     success: function() {
@@ -96,7 +96,7 @@ Parse.Cloud.define("sendPushToUser", function(request, response) {
     where: pushQuery,
     data: {
       title: title,
-      message: message
+      alert: message
     }
   }, {
     success: function() {
